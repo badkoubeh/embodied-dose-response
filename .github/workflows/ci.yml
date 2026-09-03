@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-test:
+    # CPU only. Nothing here needs a GPU, model weights, or the gated dataset --
+    # that is the point of the PLAN.md 2.1 plane split, and this job is what
+    # keeps it true.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      # --locked fails on a stale lockfile rather than silently re-resolving.
+      # No --extra gpu: torch must never be fetched here.
+      - run: uv sync --locked --extra analysis --group dev
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest

@@ -1,0 +1,14 @@
+# Primary model (PLAN.md 1). RL post-trained, Cosmos-Reason2 backbone.
+name: alpamayo15
+id: nvidia/Alpamayo-1.5-10B
+revision: main
+
+# Frozen inference (PLAN.md 3.2).
+n_traj_samples: 1
+temperature: 0.0
+flow_seed: 0
+
+# Weights alone are 22.2 GB; 16 GB cards OOM (PLAN.md 4).
+min_vram_gb: 24
+
+confounded: false

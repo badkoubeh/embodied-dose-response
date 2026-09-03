@@ -1,0 +1,23 @@
+# SECONDARY ARM -- EXPLICITLY CONFOUNDED (PLAN.md 1).
+#
+# Run only if Stage 0 shows clean ego-state sensitivity.
+#
+# This pair differs in backbone, in ~4x chain-of-causation data, AND in added
+# capabilities, all at once. No SFT-vs-RL claim can be isolated from it. Any
+# statement derived from this arm must be labelled confounded in code, in the
+# scorecard schema, and in the paper. `confounded: true` below is what the
+# scorecard reads to enforce that -- do not flip it.
+name: alpamayo1
+id: nvidia/Alpamayo-R1-10B
+revision: main
+
+n_traj_samples: 1
+temperature: 0.0
+flow_seed: 0
+min_vram_gb: 24
+
+confounded: true
+confound_note: >-
+  SFT-only vs RL post-trained, but the models also differ in backbone, in ~4x
+  CoC training data, and in added capabilities. Differences between arms are NOT
+  attributable to RL post-training.

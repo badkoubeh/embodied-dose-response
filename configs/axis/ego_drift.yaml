@@ -1,0 +1,39 @@
+# Dead-reckoning drift (PLAN.md 3.2). THE DIFFERENTIATOR AXIS -- invest here.
+#
+# PROVISIONAL GRID; see PLAN.md 5, Stage 2.
+#
+# Severity is drift as a PERCENTAGE OF DISTANCE TRAVELLED, anchored to the
+# wheel-mounted-IMU field study PLAN.md 3.2 cites: 0.47 %/distance and 1.13 deg
+# heading RMS over 26 km. `outage_duration_s` is what converts %/distance into
+# metres of accumulated offset -- without it the axis is inert, since the ~1.6 s
+# history window is only ~16 m long at urban speed. PLAN.md 3.2 names scenarios
+# like "tunnel GNSS outage at 30 s" but never states the duration. See the issue.
+name: ego_drift
+target: ego_drift
+unit: pct_distance
+seeds: 2
+log_severity: true         # spans ~1.5 decades
+
+params:
+  outage_duration_s: 30.0
+  # Field-study ratio: 1.13 deg heading RMS accompanying 0.47 %/distance.
+  heading_deg_per_pct: 2.4
+  random_walk_frac: 0.25
+
+levels:
+  full:
+    - {value: 0.00, label: "clean"}
+    - {value: 0.10, label: "tactical-grade IMU, aided odometry"}
+    - {value: 0.25, label: "wheel odometry + IMU, good traction"}
+    - {value: 0.47, label: "field study: wheel-mounted IMU over 26 km"}
+    - {value: 0.75, label: "field study conditions, degraded traction"}
+    - {value: 1.00, label: "industrial-grade IMU dead reckoning"}
+    - {value: 1.50, label: "extended GNSS outage, tunnel"}
+    - {value: 2.00, label: "upper end of reported dead-reckoning drift"}
+    - {value: 3.50, label: "clearly-broken reference point"}
+  pilot:
+    - {value: 0.00, label: "clean"}
+    - {value: 0.25, label: "wheel odometry + IMU, good traction"}
+    - {value: 0.75, label: "field study conditions, degraded traction"}
+    - {value: 1.50, label: "extended GNSS outage, tunnel"}
+    - {value: 3.50, label: "clearly-broken reference point"}

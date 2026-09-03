@@ -1,0 +1,41 @@
+# White noise on the ego-state history (PLAN.md 3.2).
+#
+# PROVISIONAL GRID. PLAN.md 5 (Stage 2) sets the reported grid from the cheap
+# adaptive pilot; these values locate a plausible range, they are not the answer.
+#
+# Severity is per-waypoint position sigma in METRES, not a datasheet rate.
+# PLAN.md 3.2 anchors this axis in ARW (0.05-0.29 deg/sqrt(hr)) and bias
+# instability (0.5-10 deg/hr), but over a 1.6 s history window even the worst of
+# those integrates to ~0.006 deg of heading noise -- the entire datasheet range
+# is inside the regime where nothing happens. So the hardware anchors LABEL
+# levels here; the span is set by accumulated localization error, which is the
+# quantity that actually perturbs this input. See the open issue.
+name: ego_noise
+target: ego_noise          # resolved via edr.perturb.build()
+unit: m
+seeds: 2
+log_severity: true         # spans ~2.3 decades (PLAN.md 4)
+
+params:
+  # Heading noise is coupled to position noise rather than dosed separately, so
+  # the axis stays one-dimensional. Ratio is provisional -- PLAN.md does not pin
+  # it and it depends on the estimator being modelled.
+  yaw_sigma_deg_per_m: 2.0
+
+levels:
+  full:
+    - {value: 0.00, label: "clean"}
+    - {value: 0.02, label: "RTK-GNSS fix, nominal"}
+    - {value: 0.05, label: "RTK float / GNSS+INS, good sky view"}
+    - {value: 0.10, label: "consumer GNSS, open sky"}
+    - {value: 0.25, label: "GNSS+INS, degraded sky view"}
+    - {value: 0.50, label: "urban multipath"}
+    - {value: 1.00, label: "urban canyon, heavy multipath"}
+    - {value: 2.00, label: "GNSS-denied, unaided industrial IMU (VN-100 class)"}
+    - {value: 4.00, label: "clearly-broken reference point"}
+  pilot:
+    - {value: 0.00, label: "clean"}
+    - {value: 0.05, label: "RTK float / GNSS+INS, good sky view"}
+    - {value: 0.25, label: "GNSS+INS, degraded sky view"}
+    - {value: 1.00, label: "urban canyon, heavy multipath"}
+    - {value: 4.00, label: "clearly-broken reference point"}

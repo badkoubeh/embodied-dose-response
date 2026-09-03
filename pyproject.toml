@@ -1,0 +1,80 @@
+[project]
+name = "edr"
+version = "0.0.1"
+description = "Dose-response failure-threshold characterization for embodied policies under graded input degradation"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+authors = [{ name = "Babak B" }]
+
+# Base install is the ANALYSIS PLANE only. See PLAN.md 2.1: GPU jobs emit raw
+# artifacts; all scoring runs post-hoc on CPU. Keeping torch out of the base
+# dependency set is what makes that separation real rather than aspirational --
+# `uv sync` must give a working analysis checkout on a laptop with no CUDA.
+dependencies = [
+    "numpy>=1.26",
+    "hydra-core>=1.3",
+    "omegaconf>=2.3",
+]
+
+[project.optional-dependencies]
+# GPU plane. Only needed on the SageMaker shard workers.
+#
+# The `sys_platform == 'linux'` markers are LOAD-BEARING, not cosmetic. torch has
+# published no macOS x86_64 wheel since 2.2.2, and this repo is developed on an
+# x86_64 Mac -- an unmarked entry here makes `uv lock` unsolvable on the dev
+# machine. Nothing enters this extra without a linux marker.
+gpu = [
+    "torch>=2.4; sys_platform == 'linux'",
+    "transformers>=4.44; sys_platform == 'linux'",
+    "accelerate>=0.34; sys_platform == 'linux'",
+    "av>=12.0; sys_platform == 'linux'",
+    "wandb>=0.17; sys_platform == 'linux'",
+]
+# Analysis plane. `doseresponse-scorecard` belongs here rather than in the base
+# dependencies: only `edr.analysis` imports it, so the plane split (PLAN.md 2.1)
+# stays visible in the dependency graph.
+analysis = [
+    "doseresponse-scorecard",
+    "pandas>=2.2",
+    "matplotlib>=3.9",
+]
+# Laptop-side job submission only. No GPU, no CUDA wheels.
+cloud = [
+    "boto3>=1.34",
+    "sagemaker>=2.230",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/edr"]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+# The scorecard is consumed from the workspace during development but stays a
+# standalone, independently publishable distribution (PLAN.md 3.2: "not a
+# monorepo, not duplicated code"). It must never import from `edr`.
+[tool.uv.sources]
+doseresponse-scorecard = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "packages/doseresponse-scorecard/tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "packages/doseresponse-scorecard/src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

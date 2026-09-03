@@ -1,0 +1,7 @@
+# Throwaway pilot (PLAN.md 5, Stage 2): locate the interesting range cheaply,
+# then re-anchor the `full` grid. Adaptive dosing is permitted here and ONLY
+# here. Results from this grid are never reported.
+name: pilot
+n_scenarios: 50
+max_seeds: 1
+reportable: false

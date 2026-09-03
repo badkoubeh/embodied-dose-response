@@ -1,0 +1,25 @@
+# Root Hydra config (PLAN.md 3.1).
+defaults:
+  - model: alpamayo15
+  - axis: ego_noise
+  - grid: full
+  - infra: local
+  - _self_
+
+paths:
+  dataset_root: ???        # gated PhysicalAI-Autonomous-Vehicles split (PLAN.md 4)
+  out_dir: outputs
+
+run:
+  # ONE fixed scenario subset, reused at every severity level. Redrawing per
+  # level would confound scenario composition with severity and destroy the
+  # pairing the clustered fit depends on (PLAN.md 2.3).
+  scenario_seed: 20260901
+
+wandb:
+  enabled: false
+  project: embodied-dose-response
+
+hydra:
+  job:
+    chdir: false
