@@ -1,0 +1,5 @@
+# Single local GPU. Stage 0 go/no-go (PLAN.md 5).
+name: local
+device: cuda
+n_shards: 1
+shard_index: 0

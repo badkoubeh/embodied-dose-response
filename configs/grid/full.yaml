@@ -1,0 +1,11 @@
+# The reported grid (PLAN.md 4). Fixed and common: both measures, both seeds,
+# and any second model see identical conditions (PLAN.md 2.3). Adaptive dosing
+# is NOT permitted here -- only in the pilot.
+name: full
+n_scenarios: 400          # of the 937-sample challenging split
+max_seeds: 2              # effective seeds = min(axis.seeds, this)
+reportable: true
+
+# ~3 axes x 9 levels x 400 scenarios x 2 seeds = 21.6k inferences,
+# ~21 GPU-h at 3.5 s/inference. Budget cap is ~100 GPU-h including pilots
+# and re-runs (PLAN.md 4).

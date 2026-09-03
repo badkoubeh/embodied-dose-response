@@ -1,0 +1,38 @@
+# Stale ego-state (PLAN.md 3.2).
+#
+# PROVISIONAL GRID; see PLAN.md 5, Stage 2.
+#
+# Severity is lag in MILLISECONDS, on multiples of the 100 ms frame period.
+#
+# Scope: EGO-STATE ONLY. The video stays at the present. Staling the video too
+# would make this end-to-end sensor latency rather than a state-input
+# degradation, which is outside the question PLAN.md 1 poses -- and it would
+# defeat the PLAN.md 2.5 pixel cache. See the open issue.
+#
+# seeds: 1 because this axis is DETERMINISTIC given tau. A second seed produces
+# a bit-identical duplicate; running one would burn ~3.5 GPU-hours on a copy.
+name: staleness
+target: staleness
+unit: ms
+seeds: 1
+log_severity: false        # PLAN.md 4: linear where the axis does not span decades
+
+params: {}
+
+levels:
+  full:
+    - {value: 0,    label: "clean"}
+    - {value: 100,  label: "1 frame"}
+    - {value: 200,  label: "2 frames"}
+    - {value: 300,  label: "3 frames"}
+    - {value: 500,  label: "5 frames (~5 m at urban speed)"}
+    - {value: 700,  label: "7 frames"}
+    - {value: 1000, label: "10 frames (~10 m at urban speed)"}
+    - {value: 1500, label: "15 frames, approaching the full history window"}
+    - {value: 2000, label: "20 frames, older than the whole history window"}
+  pilot:
+    - {value: 0,    label: "clean"}
+    - {value: 200,  label: "2 frames"}
+    - {value: 500,  label: "5 frames (~5 m at urban speed)"}
+    - {value: 1000, label: "10 frames (~10 m at urban speed)"}
+    - {value: 2000, label: "20 frames, older than the whole history window"}

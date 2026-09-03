@@ -1,0 +1,18 @@
+# Independent single-GPU SageMaker jobs, one per shard. Embarrassingly parallel
+# (PLAN.md 4).
+#
+# ON THE INSTANCE TYPE: PLAN.md 4 offers "g5.2xlarge A10G 24 GB, or A100 for
+# headroom", but 22.2 GB of weights on a 24 GB card leaves ~1.8 GB for
+# activations, video tokens, and a long chain-of-causation KV cache. Defaulting
+# to L40S 48 GB instead removes the OOM risk, stays single-GPU, and costs far
+# less than p4d/p5. See the open issue.
+#
+# Check region availability and the SageMaker quota in WEEK 1, alongside the
+# dataset access request -- quota approvals take days and the PLAN.md 5 schedule
+# assumes neither blocks.
+name: sagemaker
+instance_type: ml.g6e.xlarge      # 1x L40S 48 GB
+device: cuda
+n_shards: 24
+shard_index: 0                    # overridden per job
+max_runtime_s: 86400
