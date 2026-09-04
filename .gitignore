@@ -2,6 +2,10 @@
 # locally and referenced by section from code comments and issues.
 .docs/
 
+# Claude Code memory shim (`@AGENTS.md` import). Local convenience only --
+# AGENTS.md carries the actual shared content and stays tracked.
+CLAUDE.md
+
 # macOS
 .DS_Store
 
