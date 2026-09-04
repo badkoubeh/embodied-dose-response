@@ -9,7 +9,7 @@ asking "does measure A break before measure B?".
 
 **Nothing in this package is specific to any policy, model, or domain.** It sees
 severities, outcomes, and cluster ids. That constraint is deliberate: the package
-is shared with ZetaBench, and the same protocol is meant to apply to a driving
+is shared across projects, and the same protocol is meant to apply to a driving
 policy and to a PID loop on a 6-DOF rocket reading a biased state estimate.
 
 ## Status
