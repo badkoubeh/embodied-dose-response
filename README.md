@@ -89,6 +89,28 @@ grid after the pilot is a reviewable config diff. Every level carries a physical
 referent. **All current values are provisional** — the reported grid comes from
 the Stage-2 pilot.
 
+## Glossary
+
+| Term | Meaning |
+|---|---|
+| **edr** | The import root and distribution name: **e**mbodied **d**ose-**r**esponse. `import edr`, `pip install edr`. |
+| **dose–response** | The pharmacological framing borrowed here: sweep a graded "dose" of input degradation and fit the curve of outcome against it, instead of reporting pass/fail at a single operating point. |
+| **axis** / **severity** | The dose. An axis is a named degradation family with a physical unit (`ego_noise`, `ego_drift`, `staleness`); a severity is one scalar level on one axis. |
+| **σ\*** (sigma-star) | The **failure threshold**: the severity at which a metric crosses a stated fraction of its clean baseline. The headline result is a *ratio* of two σ\* values, not either one alone. |
+| **ED_p** | Effective dose at fraction *p* — the dose-response literature's name for σ\*. `p` is a retention fraction where higher is better and an inflation factor where lower is better, so the direction must always be stated alongside it. |
+| **cell** | One `(model, axis, severity, seed)` combination, aggregated over scenarios. The unit of both scheduling and analysis. |
+| **GPU plane** / **analysis plane** | The two halves of "the one rule". The GPU plane runs inference and emits raw artifacts; the analysis plane scores them post-hoc on CPU. They are separate dependency extras, not just separate directories. |
+| **VLA** | Vision-language-action model — a policy that consumes camera frames and text and emits both a trajectory and natural-language reasoning. Alpamayo 1.5 is the system under test. |
+| **meta-action** | A discrete driving intent — accelerate, decelerate, hold, turn-left, turn-right, yield — obtained two independent ways: parsed from the reasoning text, and derived from the predicted trajectory. |
+| **consistency** | Agreement between those two meta-actions. The interpretability guarantee whose threshold this project measures. |
+| **minADE6** | Minimum average displacement error over 6 trajectory samples. |
+| **FDE** | Final displacement error. It and minADE6 are **weak proxies** for driving quality, and are labeled as such wherever they appear. |
+| **Fieller interval** | A confidence interval for a *ratio* of two estimates, where the delta method is only an approximation. It is what gives the headline ratio an honest interval. |
+| **right-censored** | A cell whose metric never crosses its threshold anywhere in the severity grid. Reported as a one-sided lower bound on σ\*, never as the last grid point. |
+| **Clopper–Pearson** | An exact binomial interval, valid for a single cell's rate only. It does **not** transfer to an interpolated threshold. |
+| **link function** | The GLM transform relating severity to outcome probability (probit / logit / cloglog). Which link was used travels with the result, because σ\* depends on it. |
+| **score card** | The portable JSON artifact produced by `doseresponse-scorecard`: fitted thresholds plus the provenance needed to read them — threshold spec, link, log-axis flag, censoring, and how standard errors were clustered. |
+
 ## Reproducibility
 
 Every cell's randomness derives from `(scenario_id, axis, level_index,
