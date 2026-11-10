@@ -16,6 +16,12 @@ import edr
 
 STUB_PACKAGES = ["edr.data", "edr.runner", "edr.metrics", "edr.analysis"]
 
+# Modules within the stub packages above that have been implemented for real.
+# Narrowed here rather than dropping the whole package out of STUB_PACKAGES,
+# since sibling modules in the same package (e.g. edr.metrics.meta_action,
+# still blocked on the calibration set) are still pinned signatures only.
+IMPLEMENTED_MODULES = {"edr.metrics.trajectory"}
+
 
 def _modules(package_names):
     for name in package_names:
@@ -23,6 +29,10 @@ def _modules(package_names):
         yield pkg
         for info in pkgutil.iter_modules(pkg.__path__):
             yield importlib.import_module(f"{name}.{info.name}")
+
+
+def _stub_modules(package_names):
+    return (m for m in _modules(package_names) if m.__name__ not in IMPLEMENTED_MODULES)
 
 
 ALL_MODULES = list(_modules(["edr", "edr.perturb", *STUB_PACKAGES]))
@@ -40,7 +50,7 @@ def test_all_annotations_resolve(module):
             typing.get_type_hints(obj)
 
 
-@pytest.mark.parametrize("module", list(_modules(STUB_PACKAGES)), ids=lambda m: m.__name__)
+@pytest.mark.parametrize("module", list(_stub_modules(STUB_PACKAGES)), ids=lambda m: m.__name__)
 def test_stub_callables_raise_not_implemented(module):
     """A stub must fail with NotImplementedError, not TypeError -- a TypeError
     means the signature itself is wrong."""
